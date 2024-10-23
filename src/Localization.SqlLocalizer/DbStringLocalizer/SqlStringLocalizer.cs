@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
 {
     public class SqlStringLocalizer : IStringLocalizer
     {
-        private const string DEFAULT_CULTURE = "en-US";
+        private const string DEFAULT_CULTURE = "en-GB";
 
         private readonly Dictionary<string, string> _localizations;
 
@@ -40,7 +40,7 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
                 }
 
                 // Temporary fix for incomplete translations (removing the culture suffix).
-                string[] cultureSuffixes = { "en-US", "fr-FR", "de-DE", "it-IT", "es-ES", "tr-TR" };
+                string[] cultureSuffixes = { "en-US", "en-GB", "fr-FR", "de-DE", "it-IT", "es-ES", "tr-TR" };
                 if (text != null && cultureSuffixes.Any(x => text.EndsWith($".{x}")))
                 {
                     text = text.Substring(0, text.Length - ".en-US".Length);
