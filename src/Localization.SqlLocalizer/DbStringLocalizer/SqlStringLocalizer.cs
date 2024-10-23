@@ -28,8 +28,8 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
             {
                 bool notSucceed;
                 var text = GetText(name, out notSucceed);
-                
-                return new LocalizedString(name, text,notSucceed);
+
+                return new LocalizedString(name, text, notSucceed);
             }
         }
 
@@ -45,7 +45,6 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
             throw new NotImplementedException();
-            
         }
 
         public IStringLocalizer WithCulture(CultureInfo culture)
@@ -53,7 +52,7 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
             throw new NotImplementedException();
         }
 
-        private string GetText(string key,out bool notSucceed)
+        private string GetText(string key, out bool notSucceed)
         {
 
 #if NET451
@@ -90,8 +89,5 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
                 return _resourceKey + "." + computedKey;
             }
         }
-
-
-
     }
 }
