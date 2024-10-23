@@ -7,6 +7,8 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
 {
     public class SqlStringLocalizer : IStringLocalizer
     {
+        private const string DEFAULT_CULTURE = "en-US";
+
         private readonly Dictionary<string, string> _localizations;
 
         private readonly DevelopmentSetup _developmentSetup;
@@ -28,6 +30,13 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
             {
                 bool notSucceed;
                 var text = GetText(name, out notSucceed);
+
+                // If value is null, then get value from fallbackCulture
+                var fallbackCulture = new CultureInfo(DEFAULT_CULTURE);
+                if (fallbackCulture != null && text == null && !notSucceed)
+                {
+                    text = GetText(name, out notSucceed, fallbackCulture);
+                }
 
                 return new LocalizedString(name, text, notSucceed);
             }
@@ -52,7 +61,7 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
             throw new NotImplementedException();
         }
 
-        private string GetText(string key, out bool notSucceed)
+        private string GetText(string key, out bool notSucceed, CultureInfo culture = null)
         {
 
 #if NET451
@@ -60,7 +69,10 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
 #elif NET46
             var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
 #else
-            var culture = CultureInfo.CurrentCulture;
+            if (culture is null)
+            {
+                culture = CultureInfo.CurrentCulture;
+            }
 #endif
 
             string computedKey = $"{key}.{culture}";
@@ -75,7 +87,10 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
             else
             {
                 notSucceed = true;
-                if (_createNewRecordWhenLocalisedStringDoesNotExist)
+                // Note: The additional check for the culture name, should prevent our database
+                // to have too many irrelevant localization entries.
+                if (_createNewRecordWhenLocalisedStringDoesNotExist
+                    && string.Equals(culture.Name, DEFAULT_CULTURE, StringComparison.OrdinalIgnoreCase))
                 {
                     _developmentSetup.AddNewLocalizedItem(key, culture.ToString(), _resourceKey);
                     _localizations.Add(computedKey, computedKey);
