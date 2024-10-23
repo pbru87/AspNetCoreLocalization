@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Microsoft.Extensions.Localization;
 
 namespace Localization.SqlLocalizer.DbStringLocalizer
@@ -36,6 +37,13 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
                 if (fallbackCulture != null && text == null && !notSucceed)
                 {
                     text = GetText(name, out notSucceed, fallbackCulture);
+                }
+
+                // Temporary fix for incomplete translations (removing the culture suffix).
+                string[] cultureSuffixes = { "en-US", "fr-FR", "de-DE", "it-IT", "es-ES", "tr-TR" };
+                if (text != null && cultureSuffixes.Any(x => text.EndsWith($".{x}")))
+                {
+                    text = text.Substring(0, text.Length - ".en-US".Length);
                 }
 
                 return new LocalizedString(name, text, notSucceed);
