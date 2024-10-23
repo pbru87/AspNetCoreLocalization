@@ -16,6 +16,7 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
             _schema = contextOptions.Value.SqlSchemaName;
         }
 
+        public DbSet<LocalizationComment> LocalizationComments { get; set; }
         public DbSet<LocalizationRecord> LocalizationRecords { get; set; }
         public DbSet<ExportHistory> ExportHistoryDbSet { get; set; }
         public DbSet<ImportHistory> ImportHistoryDbSet { get; set; }
@@ -34,6 +35,13 @@ namespace Localization.SqlLocalizer.DbStringLocalizer
             builder.Entity<ExportHistory>().HasKey(m => m.Id);
 
             builder.Entity<ImportHistory>().HasKey(m => m.Id);
+
+            // Custom addition (to add table to store comments)
+            builder.Entity<LocalizationComment>().HasKey(x => x.Id);
+            builder.Entity<LocalizationComment>()
+                .HasOne(x => x.LocalizationRecord)
+                .WithOne()
+                .HasForeignKey<LocalizationComment>(x => x.LocalizationRecordId);
 
             base.OnModelCreating(builder);
         }
